@@ -1,0 +1,21 @@
+.error_coin_flip{
+	font-weight: bold;
+	font-size: 40px;
+	color: darkred;
+}
+
+#wrapper_flip_coin_result_img_heads{
+	width: 300px;
+	height: 300px;
+	display: none;
+}
+
+#wrapper_flip_coin_result_img_tails{
+	width: 450px;
+	height: 300px;
+	display: none;
+}
+
+.giftcard_message_wrapper{
+	font-size: 30px;
+}

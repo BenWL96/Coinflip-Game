@@ -1,0 +1,187 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <link href="{% static 'giftcard_application/css/landing_page.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+
+    <button type="button" class="btn btn-dark" onclick="makeCard()">Generate New Giftcard</button>
+
+
+    <button type="button" class="btn btn-dark" id="flip_coin_button" onclick="payForCoinFlip()">Flip Coin</button>
+
+    <div class="giftcard_message_wrapper" id="giftcard_message_wrapper">
+    </div>
+
+    <div class="wrapper_flip_coin">
+      <div class="container my-5 wrapper_flip_coin_container" id="flip_coin">
+      </div>
+    </div>
+
+    <div class="wrapper_flip_coin_result" id="flip_coin_result">
+        <img src="{% static 'giftcard_application/images/heads_coin.webp' %}" id="wrapper_flip_coin_result_img_heads">
+
+        <img src="{% static 'giftcard_application/images/tails_coin.webp' %}" id="wrapper_flip_coin_result_img_tails">
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+    <script>
+
+
+      var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_heads');
+      var coin_flip_tails = document.getElementById('wrapper_flip_coin_result_img_tails');
+      var giftcard_message = document.getElementById('giftcard_message_wrapper');
+
+      var flip_coin_btn = document.getElementById('flip_coin_button');
+
+      async function makeCard(){
+
+        coin_flip_heads.style.display = 'none';
+        coin_flip_tails.style.display = 'none';
+
+      console.log('function activated');
+      var giftcard_url = "{% url 'giftcard_api:giftcards' %}";
+
+
+
+       await fetch(giftcard_url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+            },
+
+        })
+      .then((resp) => {
+
+      if (resp.status === 200){
+        console.log(resp)
+        return resp.json()
+        }
+      throw new Error("The dates could not be fetched.")
+      })
+      .then(function(data){
+          console.log(data);
+          //Sets global variable
+
+          card_number = data.identifier;
+          gift_card_info = data;
+          giftcard_created_message();
+          disable_button();
+      })
+      .catch((error) => {
+      console.log(error)
+      });
+
+    }
+
+    function disable_button(){
+
+    }
+
+    function giftcard_created_message(){
+
+        const message = `giftcard has been issued ! `
+
+        giftcard_message.innerHTML += message
+
+        return
+    }
+
+    async function payForCoinFlip(){
+
+      giftcard_message.innerHTML = ``
+
+      var coin_flip_wrapper = document.getElementById('flip_coin');
+      if (typeof card_number !== 'undefined') {
+        
+         var giftcard_detail_url = "{% url 'giftcard_api:giftcards' %}" + card_number + "/details/";
+  
+
+        await fetch(giftcard_detail_url, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+          })
+        .then((resp) => {
+
+        if (resp.status === 200){
+
+          console.log(resp)
+          return resp.json()
+
+          }
+        throw new Error("The dates could not be fetched.")
+        })
+        .then(function(data){
+
+          console.log(data);
+
+          coinFlip(); 
+
+          const credit_rem = data.credit_remaining
+
+          if (credit_rem == 0){
+            console.log("If credit_remaining = 0 then disable button");
+            disable_flip_button();
+          } 
+
+          return
+
+
+        })
+        .catch((error) => {
+        console.log(error)
+        });
+      } else {
+
+
+        console.log("type not defined");
+        alert("code from here on out doesn't work");
+        const message = `<p class="error_coin_flip>Please Generate A Gift Card First..</p>`;
+
+        coin_flip_wrapper.innerHTML = message;
+        }
+
+      }
+
+      function disable_flip_button(){
+        flip_coin_btn.disabled = true;
+        return
+      }
+
+      function coinFlip(){
+        console.log("Thanks for playing !");
+
+        var heads_tails = Math.round(Math.random());
+
+
+        if (heads_tails == 1){
+          coin_flip_heads.style.display = 'block';
+          coin_flip_tails.style.display = 'none';
+
+          console.log(card_number);
+          console.log(gift_card_info);
+
+          return
+        } 
+
+        coin_flip_heads.style.display = 'none';
+        coin_flip_tails.style.display = 'block';
+        
+          return
+
+
+      }
+
+    </script> 
+  </body>
+</html>
