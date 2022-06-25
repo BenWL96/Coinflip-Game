@@ -9,7 +9,7 @@
     <link href="{% static 'giftcard_application/css/landing_page.css' %}" rel="stylesheet" />
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <h1>Gift Card Coin Flip</h1>
 
     <button type="button" class="btn btn-dark" onclick="makeCard()">Generate New Giftcard</button>
 
@@ -24,11 +24,22 @@
       </div>
     </div>
 
+    <div class="score_system_heads" id="score_system_heads">
+      Heads <p id="heads_count">0</p>
+    </div>
+
+    <div class="score_system_heads" id="score_system_tails">
+      Tails <p id="tails_count">0</p>
+    </div>
+
     <div class="wrapper_flip_coin_result" id="flip_coin_result">
         <img src="{% static 'giftcard_application/images/heads_coin.webp' %}" id="wrapper_flip_coin_result_img_heads">
 
         <img src="{% static 'giftcard_application/images/tails_coin.webp' %}" id="wrapper_flip_coin_result_img_tails">
     </div>
+
+
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
@@ -42,10 +53,21 @@
 
       var flip_coin_btn = document.getElementById('flip_coin_button');
 
+      var score_system_heads = document.getElementById('heads_count');
+      var score_system_tails = document.getElementById('tails_count');
+
+      var heads_count = 0;
+      var tails_count = 0;
+
+      score_system_heads.innerHTML = heads_count;
+      score_system_tails.innerHTML = tails_count;
+
       async function makeCard(){
 
         coin_flip_heads.style.display = 'none';
         coin_flip_tails.style.display = 'none';
+
+        flip_coin_btn.disabled = false;
 
       console.log('function activated');
       var giftcard_url = "{% url 'giftcard_api:giftcards' %}";
@@ -103,7 +125,9 @@
       if (typeof card_number !== 'undefined') {
         
          var giftcard_detail_url = "{% url 'giftcard_api:giftcards' %}" + card_number + "/details/";
-  
+          
+          let heads = 0;
+          let tails = 0;
 
         await fetch(giftcard_detail_url, {
                 method: 'PATCH',
@@ -127,7 +151,7 @@
 
           coinFlip(); 
 
-          const credit_rem = data.credit_remaining
+          const credit_rem = data.credit_remaining;
 
           if (credit_rem == 0){
             console.log("If credit_remaining = 0 then disable button");
@@ -163,22 +187,28 @@
 
         var heads_tails = Math.round(Math.random());
 
-
         if (heads_tails == 1){
+          
           coin_flip_heads.style.display = 'block';
           coin_flip_tails.style.display = 'none';
 
-          console.log(card_number);
-          console.log(gift_card_info);
+          score_system_heads.innerHTML = ++heads_count;
+          
 
           return
-        } 
 
-        coin_flip_heads.style.display = 'none';
-        coin_flip_tails.style.display = 'block';
-        
+        } else {
+
+          coin_flip_heads.style.display = 'none';
+          coin_flip_tails.style.display = 'block';
+          
+          score_system_tails.innerHTML = ++tails_count;
+    
+          
+
           return
 
+        }
 
       }
 
