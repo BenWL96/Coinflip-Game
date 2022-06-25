@@ -10,5 +10,10 @@ urlpatterns = [
 		'giftcards/<int:identifier>/details/',
 		views.giftcard_detail.as_view(),
 		name="giftcard_detail"
+	),
+	path(
+		'scoreboard/',
+		views.scoreboard,
+		name="scoreboard"
 	)
 ]

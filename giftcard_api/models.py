@@ -15,3 +15,8 @@ class Giftcards(models.Model):
 	class Meta:
 		verbose_name = "Giftcard"
 		verbose_name_plural = "Giftcards"
+
+class Scoreboard(models.Model):
+	score_id = models.AutoField(primary_key=True)
+	probability_heads = models.DecimalField(max_digits=3, decimal_places=2)
+	probability_tails = models.DecimalField(max_digits=3, decimal_places=2)

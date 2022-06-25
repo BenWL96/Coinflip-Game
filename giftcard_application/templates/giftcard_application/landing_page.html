@@ -7,40 +7,85 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
     <link href="{% static 'giftcard_application/css/landing_page.css' %}" rel="stylesheet" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   </head>
   <body>
-    <h1>Gift Card Coin Flip</h1>
 
-    <button type="button" class="btn btn-dark" onclick="makeCard()">Generate New Giftcard</button>
+    <div class="container my-5">
+      <div class="row">
+        <div class="col">
+
+      <h1>Gift Card Coin Flip</h1>
+      <p>The niftiest little game that you've never heard of</p>
+
+      <button type="button" class="btn btn-dark" onclick="makeCard()" id="generate_giftcard_btn">Generate New Giftcard</button>
 
 
-    <button type="button" class="btn btn-dark" id="flip_coin_button" onclick="payForCoinFlip()">Flip Coin</button>
+      <button type="button" class="btn btn-dark" id="flip_coin_button" onclick="payForCoinFlip()">Flip Coin</button>
 
-    <div class="giftcard_message_wrapper" id="giftcard_message_wrapper">
-    </div>
+      <div class="giftcard_message_wrapper" id="giftcard_message_wrapper">
+      </div>
 
-    <div class="wrapper_flip_coin">
-      <div class="container my-5 wrapper_flip_coin_container" id="flip_coin">
+      <div class="wrapper_flip_coin">
+        <div class="container my-5 wrapper_flip_coin_container" id="flip_coin">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="score_system_title" id="score_system_heads">
+            Heads <p id="heads_count">0</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="score_system_title" id="score_system_tails">
+            Tails <p id="tails_count">0</p>
+          </div>
+        </div>
+      </div>
+
+          <div class="wrapper_flip_coin_result" id="flip_coin_result">
+              <img src="{% static 'giftcard_application/images/heads_coin.webp' %}" id="wrapper_flip_coin_result_img_heads">
+
+              <img src="{% static 'giftcard_application/images/tails_coin.webp' %}" id="wrapper_flip_coin_result_img_tails">
+
+              <img src="{% static 'giftcard_application/images/Golden-Gift-Card.jpg' %}" id="giftcard_img">
+          </div>
+        </div>
+        <div class="col">
+          <div class="scoreboard_wrapper">
+            <div class="container scoreboard_wrapper_container">
+              <p class="scoreboard_title">SCOREBOARD</p>
+
+              <div class="row">
+                <div class="col">
+                  Game ID
+                </div>
+                <div class="col">
+                  Heads
+                </div>
+                <div class="col">
+                  Tails
+                </div>
+              </div>
+              <div id="scoreboard_wrapper_container_list"></div>
+            </div>
+          </div> 
+        </div>
       </div>
     </div>
 
-    <div class="score_system_heads" id="score_system_heads">
-      Heads <p id="heads_count">0</p>
+
+    <div class="container my-5 chart_container">
+      <p class="chart_container_title">
+        Average Probability Of Heads / Tails
+      </p>
+      <canvas id="myChart"></canvas>
+
     </div>
-
-    <div class="score_system_heads" id="score_system_tails">
-      Tails <p id="tails_count">0</p>
-    </div>
-
-    <div class="wrapper_flip_coin_result" id="flip_coin_result">
-        <img src="{% static 'giftcard_application/images/heads_coin.webp' %}" id="wrapper_flip_coin_result_img_heads">
-
-        <img src="{% static 'giftcard_application/images/tails_coin.webp' %}" id="wrapper_flip_coin_result_img_tails">
-    </div>
-
-
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 
@@ -49,8 +94,11 @@
 
       var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_heads');
       var coin_flip_tails = document.getElementById('wrapper_flip_coin_result_img_tails');
+      var giftcard_img = document.getElementById('giftcard_img');
+
       var giftcard_message = document.getElementById('giftcard_message_wrapper');
 
+      var generate_giftcard_btn = document.getElementById('generate_giftcard_btn');
       var flip_coin_btn = document.getElementById('flip_coin_button');
 
       var score_system_heads = document.getElementById('heads_count');
@@ -62,12 +110,26 @@
       score_system_heads.innerHTML = heads_count;
       score_system_tails.innerHTML = tails_count;
 
+      //scoreboard
+      scoreboard_list = document.getElementById('scoreboard_wrapper_container_list')
+
+      flip_coin_btn.disabled = true;
+
       async function makeCard(){
 
+        //Hide both heads and tails.
         coin_flip_heads.style.display = 'none';
         coin_flip_tails.style.display = 'none';
 
+        //When new card is created then user can add stuff again
         flip_coin_btn.disabled = false;
+
+
+        //Reset the counter globally when a new giftcard is made
+        //Reset the content of div
+        reset_counter();
+        disable_generate_giftcard();
+
 
       console.log('function activated');
       var giftcard_url = "{% url 'giftcard_api:giftcards' %}";
@@ -104,15 +166,26 @@
 
     }
 
-    function disable_button(){
+    function disable_generate_giftcard(){
+        generate_giftcard_btn.disabled = true;
+        giftcard_img.style.display = 'none';
+        return
+      }
 
+
+    function reset_counter(){
+      heads_count = 0;
+      tails_count = 0;
+
+      score_system_heads.innerHTML = 0;
+      score_system_tails.innerHTML = 0;
     }
 
     function giftcard_created_message(){
 
         const message = `giftcard has been issued ! `
 
-        giftcard_message.innerHTML += message
+        //Pass this message to a toast or something
 
         return
     }
@@ -126,8 +199,7 @@
         
          var giftcard_detail_url = "{% url 'giftcard_api:giftcards' %}" + card_number + "/details/";
           
-          let heads = 0;
-          let tails = 0;
+          
 
         await fetch(giftcard_detail_url, {
                 method: 'PATCH',
@@ -156,6 +228,10 @@
           if (credit_rem == 0){
             console.log("If credit_remaining = 0 then disable button");
             disable_flip_button();
+            calculate_head_tail_ratio_stat();
+            submit_to_scoreboard();
+            allow_generate_giftcard();
+
           } 
 
           return
@@ -177,10 +253,14 @@
 
       }
 
+
+
       function disable_flip_button(){
         flip_coin_btn.disabled = true;
         return
       }
+
+
 
       function coinFlip(){
         console.log("Thanks for playing !");
@@ -188,7 +268,7 @@
         var heads_tails = Math.round(Math.random());
 
         if (heads_tails == 1){
-          
+
           coin_flip_heads.style.display = 'block';
           coin_flip_tails.style.display = 'none';
 
@@ -212,6 +292,198 @@
 
       }
 
+
+
+      function calculate_head_tail_ratio_stat(){
+        heads_statistic = heads_count / 25;
+        tails_statistic = tails_count / 25;
+
+        alert("probability of heads: " + heads_statistic + "\n  probability of tails: " + tails_statistic);
+
+        return
+
+      }
+
+
+      function allow_generate_giftcard(){
+        generate_giftcard_btn.disabled = false;
+        giftcard_img.style.display = 'none';
+        return
+      }
+
+      async function submit_to_scoreboard(){
+        var scoreboard_url = "{% url 'giftcard_api:scoreboard' %}";
+
+        data = {
+          'probability_heads': heads_statistic,
+          'probability_tails': tails_statistic,
+        }
+
+
+        await fetch(scoreboard_url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+          })
+        .then((resp) => {
+
+        if (resp.status === 200){
+          console.log(resp)
+          return resp.json()
+          }
+        throw new Error("The dates could not be fetched.")
+        })
+        .then(function(data){
+            
+            //We want to append the data after the game ends.
+            
+            var row = `
+              <div class="row">
+                <div class="col">
+                  ${data.score_id}
+                </div>
+                <div class="col">
+                  ${data.probability_heads}
+                </div>
+                <div class="col">
+                  ${data.probability_tails}
+                </div>
+              </div>
+
+            `
+
+            scoreboard_list.innerHTML += row;
+
+        })
+        .catch((error) => {
+        console.log(error)
+        });
+
+      }
+
+      //begin this function upon page load
+
+      get_scoreboard();
+
+      async function get_scoreboard(){
+        var scoreboard_url = "{% url 'giftcard_api:scoreboard' %}";
+
+        await fetch(scoreboard_url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          })
+        .then((resp) => {
+
+        if (resp.status === 200){
+          console.log(resp)
+          return resp.json()
+          }
+        throw new Error("The dates could not be fetched.")
+        })
+        .then(function(data){
+          console.log(data);
+          build_scoreboard(data);
+          create_heads_tails_averaging(data);
+
+        })
+        .catch((error) => {
+        console.log(error)
+        });
+
+      }
+
+      function build_scoreboard(data){
+        if (data.length == 0){
+          message = "Sorry but there are no scores yet.";
+        } else {
+
+          for (var i in data){
+
+            data_entry = data[i];
+
+            var row = `
+              <div class="row">
+                <div class="col">
+                  ${data_entry.score_id}
+                </div>
+                <div class="col">
+                  ${data_entry.probability_heads}
+                </div>
+                <div class="col">
+                  ${data_entry.probability_tails}
+                </div>
+              </div>
+
+            `
+
+            scoreboard_list.innerHTML += row;
+
+          }
+     
+          //for every item in the data, place it in score board container.
+
+        }
+      }
+
+
+      function create_heads_tails_averaging(data){
+        let list_heads = 0;
+        let list_tails = 0;
+        let total_scores = 0
+
+        for (var i in data){
+
+            data_entry = data[i];
+
+            list_heads + data_entry.probability_heads;
+            list_tails + data_entry.probability_tails;
+            total_scores + 1;
+        
+        //set as global variables
+        percentage_heads_overall = list_heads / total_scores;
+        percentage_tails_overall = list_tails;
+      }
     </script> 
+
+    <script>
+
+      //fetch all score data,
+      //find average of all heads and feed into graphy
+      //Do same with tails
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+      const myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: ['Heads', 'Tails'],
+              datasets: [{
+                  data: [12, 19, 3, 5, 2, 3],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                     
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+</script>
+
   </body>
 </html>

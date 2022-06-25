@@ -1,3 +1,7 @@
+body{
+	background-color: #FAEBD7;
+}
+
 .error_coin_flip{
 	font-weight: bold;
 	font-size: 40px;
@@ -18,4 +22,33 @@
 
 .giftcard_message_wrapper{
 	font-size: 30px;
+}
+
+#giftcard_img{
+	width: 450px;
+	height: 300px;
+}
+
+.scoreboard_wrapper{
+	height: 500px;
+	background-color: black;
+	color: white;
+}
+
+#scoreboard_wrapper_container_list{
+	overflow: auto;
+	height: 300px;
+	background-color: gray;
+}
+
+
+.score_system_title{
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#myChart{
+	background-color: white;
+	width: 100%;
+	height: 50vh;	
 }
