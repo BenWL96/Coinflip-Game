@@ -1,110 +1,4 @@
-{% load static %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-
-    <link href="{% static 'giftcard_application/css/landing_page.css' %}" rel="stylesheet" />
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  </head>
-  <body>
-
-    <div class="container my-5">
-      <div class="row">
-        <div class="col">
-
-      <h1>Gift Card Coin Flip</h1>
-      <p>The niftiest little game that you've never heard of</p>
-
-      <button type="button" class="btn btn-dark" onclick="makeCard()" id="generate_giftcard_btn">Generate New Giftcard</button>
-
-
-      <button type="button" class="btn btn-dark" id="flip_coin_button" onclick="payForCoinFlip()">Flip Coin</button>
-
-      <div class="giftcard_message_wrapper" id="giftcard_message_wrapper">
-      </div>
-
-      <div class="wrapper_flip_coin">
-        <div class="container my-5 wrapper_flip_coin_container" id="flip_coin">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="score_system_title" id="score_system_heads">
-            Heads <p id="heads_count">0</p>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="score_system_title" id="score_system_tails">
-            Tails <p id="tails_count">0</p>
-          </div>
-        </div>
-      </div>
-
-          <div class="wrapper_flip_coin_result" id="flip_coin_result">
-              <img src="{% static 'giftcard_application/images/heads_coin.webp' %}" id="wrapper_flip_coin_result_img_heads">
-
-              <img src="{% static 'giftcard_application/images/tails_coin.webp' %}" id="wrapper_flip_coin_result_img_tails">
-
-              <img src="{% static 'giftcard_application/images/Golden-Gift-Card.jpg' %}" id="giftcard_img">
-
-            
-          </div>
-        </div>
-        <div class="col">
-          <div class="scoreboard_wrapper">
-            <div class="container scoreboard_wrapper_container">
-              <p class="scoreboard_title">SCOREBOARD</p>
-
-              <div class="row">
-                <div class="col">
-                  Game ID
-                </div>
-                <div class="col">
-                  Heads
-                </div>
-                <div class="col">
-                  Tails
-                </div>
-              </div>
-              <div id="scoreboard_wrapper_container_list"></div>
-            </div>
-          </div> 
-        </div>
-      </div>
-    </div>
-
-
-    <div class="container my-5 chart_container">
-      <p class="chart_container_title">
-        Distribution Of Heads
-      </p>
-      <canvas id="heads_chart"></canvas>
-
-    </div>
-
-    <div class="container my-5 chart_container">
-      <p class="chart_container_title">
-        Distribution Of Tails
-      </p>
-      <canvas id="tails_chart"></canvas>
-
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-
-
-
-    <script>
-
-
-      var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_heads');
+var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_heads');
       var coin_flip_tails = document.getElementById('wrapper_flip_coin_result_img_tails');
       var giftcard_img = document.getElementById('giftcard_img');
 
@@ -129,15 +23,6 @@
 
       async function makeCard(){
 
-        Swal.fire({
-          position: 'center',
-          icon: 'success',
-          title: 'A giftcard has been created',
-          showConfirmButton: false,
-          timer: 1500
-        })
-
-
         //Hide both heads and tails.
         coin_flip_heads.style.display = 'none';
         coin_flip_tails.style.display = 'none';
@@ -150,8 +35,6 @@
         //Reset the content of div
         reset_counter();
         disable_generate_giftcard();
-
-
 
 
       console.log('function activated');
@@ -252,7 +135,7 @@
             console.log("If credit_remaining = 0 then disable button");
             disable_flip_button();
             calculate_head_tail_ratio_stat();
-            submit_to_scoreboard_question();
+            submit_to_scoreboard();
             allow_generate_giftcard();
 
           } 
@@ -334,31 +217,7 @@
         return
       }
 
-      function submit_to_scoreboard_question(){
-
-        Swal.fire({
-          title: 'Save to the scoreboard?',
-          showDenyButton: true,
-          confirmButtonText: 'Save',
-          denyButtonText: `Don't save`,
-        }).then((result) => {
-          /* Read more about isConfirmed, isDenied below */
-          if (result.isConfirmed) {
-
-            submit_to_scoreboard();
-            //Swal.fire('Sending info to scoreboard...');
-            console.log('display a wheel whilst POST is happening');
-            return;
-
-          } else if (result.isDenied) {
-
-            return;
-          }
-        })
-      }
-
       async function submit_to_scoreboard(){
-
         var scoreboard_url = "{% url 'giftcard_api:scoreboard' %}";
 
         data = {
@@ -577,9 +436,3 @@
               }
           }
       });
-</script>
-
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  </body>
-</html>

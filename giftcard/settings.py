@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'giftcard_api',
     'giftcard_application',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
