@@ -72,17 +72,17 @@
               <br>
               <br>
               <br>
-              <p class="scoreboard_title">SCOREBOARD</p>
+              <p class="scoreboard_title">Games Played</p>
 
               <div class="row container scoreboard_wrapper_container_row">
                 <div class="col container scoreboard_wrapper_container_row_col">
                   Game ID
                 </div>
                 <div class="col container scoreboard_wrapper_container_row_col">
-                  Heads
+                  (p) Heads
                 </div>
                 <div class="col container scoreboard_wrapper_container_row_col">
-                  Tails
+                  (p) Tails
                 </div>
               </div>
               <div id="scoreboard_wrapper_container_list"></div>
@@ -353,8 +353,6 @@
         heads_statistic = heads_count / 25;
         tails_statistic = tails_count / 25;
 
-        alert("probability of heads: " + heads_statistic + "\n  probability of tails: " + tails_statistic);
-
         return
 
       }
@@ -383,8 +381,10 @@
             return;
 
           } else if (result.isDenied) {
-
+            Swal.fire('Add your score next time !');
             return;
+          } else {
+            submit_to_scoreboard_question();
           }
         })
       }
@@ -553,7 +553,7 @@
 
       const head = document.getElementById('heads_chart').getContext('2d');
       const headChart = new Chart(head, {
-          type: 'line',
+          type: 'bar',
           data: {
               labels: [],
               datasets: [{
@@ -583,7 +583,7 @@
 
       const tail = document.getElementById('tails_chart').getContext('2d');
       const tailChart = new Chart(tail, {
-          type: 'line',
+          type: 'bar',
           data: {
               labels: [],
               datasets: [{
@@ -591,13 +591,11 @@
                   backgroundColor: [
                    
                       'rgba(54, 162, 235, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(54, 162, 235, 0.2)'
                       
                   ],
-                  borderColor: [
-      
-                      'rgba(54, 162, 235, 1)',
-                     
-                  ],
+                  
                   borderWidth: 1
               }]
           },

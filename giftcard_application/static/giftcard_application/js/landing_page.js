@@ -1,6 +1,7 @@
 var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_heads');
       var coin_flip_tails = document.getElementById('wrapper_flip_coin_result_img_tails');
       var giftcard_img = document.getElementById('giftcard_img');
+      var flip_prompt_img = document.getElementById('flip_prompt');
 
       var giftcard_message = document.getElementById('giftcard_message_wrapper');
 
@@ -23,6 +24,15 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
 
       async function makeCard(){
 
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'A giftcard has been created',
+          showConfirmButton: false,
+          timer: 1500
+        })
+
+
         //Hide both heads and tails.
         coin_flip_heads.style.display = 'none';
         coin_flip_tails.style.display = 'none';
@@ -35,6 +45,9 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
         //Reset the content of div
         reset_counter();
         disable_generate_giftcard();
+    
+        
+
 
 
       console.log('function activated');
@@ -63,8 +76,10 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
 
           card_number = data.identifier;
           gift_card_info = data;
-          giftcard_created_message();
-          disable_button();
+          //giftcard_created_message();
+          //disable_button();
+          flip_prompt_display();
+
       })
       .catch((error) => {
       console.log(error)
@@ -72,10 +87,15 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
 
     }
 
+    function flip_prompt_display(){
+      flip_prompt_img.style.display = 'block';
+      return;
+    }
+
     function disable_generate_giftcard(){
         generate_giftcard_btn.disabled = true;
         giftcard_img.style.display = 'none';
-        return
+        return;
       }
 
 
@@ -89,11 +109,11 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
 
     function giftcard_created_message(){
 
-        const message = `giftcard has been issued ! `
+        const message = `giftcard has been issued ! `;
 
         //Pass this message to a toast or something
 
-        return
+        return;
     }
 
     async function payForCoinFlip(){
@@ -127,15 +147,17 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
 
           console.log(data);
 
+          flip_prompt_hide();
           coinFlip(); 
 
           const credit_rem = data.credit_remaining;
 
           if (credit_rem == 0){
             console.log("If credit_remaining = 0 then disable button");
+            
             disable_flip_button();
             calculate_head_tail_ratio_stat();
-            submit_to_scoreboard();
+            submit_to_scoreboard_question();
             allow_generate_giftcard();
 
           } 
@@ -159,6 +181,13 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
 
       }
 
+      function flip_prompt_hide(){
+        if (flip_prompt_img.style.display !== 'none'){
+        flip_prompt_img.style.display = 'none';
+        return;
+      }
+      return
+    }
 
 
       function disable_flip_button(){
@@ -217,7 +246,31 @@ var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_head
         return
       }
 
+      function submit_to_scoreboard_question(){
+
+        Swal.fire({
+          title: 'Save to the scoreboard?',
+          showDenyButton: true,
+          confirmButtonText: 'Save',
+          denyButtonText: `Don't save`,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+
+            submit_to_scoreboard();
+            //Swal.fire('Sending info to scoreboard...');
+            console.log('display a wheel whilst POST is happening');
+            return;
+
+          } else if (result.isDenied) {
+
+            return;
+          }
+        })
+      }
+
       async function submit_to_scoreboard(){
+
         var scoreboard_url = "{% url 'giftcard_api:scoreboard' %}";
 
         data = {
