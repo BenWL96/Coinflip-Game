@@ -30,7 +30,7 @@ body{
 }
 
 .scoreboard_wrapper{
-	height: 500px;
+	height: 556.65px;
 	background-color: black;
 	color: white;
 }
@@ -39,12 +39,22 @@ body{
 	overflow: auto;
 	height: 300px;
 	background-color: gray;
+	text-align: center;
 }
 
+.scoreboard_wrapper_container_row_col{
+	text-align: center;
+}
 
 .score_system_title{
 	font-size: 20px;
 	font-weight: bold;
+}
+
+.scoreboard_title{
+	font-size: 30px;
+	text-decoration: underline;
+	text-align: center;
 }
 
 #heads_chart{
@@ -62,3 +72,11 @@ body{
 .toast{
 	display: block;
 }
+
+
+#flip_prompt{
+	width: 300px;
+	height: 300px;
+	display: none;
+}
+

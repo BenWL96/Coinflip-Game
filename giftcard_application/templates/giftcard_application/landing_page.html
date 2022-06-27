@@ -36,6 +36,13 @@
       <div class="row">
         <div class="col">
           <div class="score_system_title" id="score_system_heads">
+            <p></p>Tally
+          </div>
+        </div>
+
+
+        <div class="col">
+          <div class="score_system_title" id="score_system_heads">
             Heads <p id="heads_count">0</p>
           </div>
         </div>
@@ -50,6 +57,8 @@
           <div class="wrapper_flip_coin_result" id="flip_coin_result">
               <img src="{% static 'giftcard_application/images/heads_coin.webp' %}" id="wrapper_flip_coin_result_img_heads">
 
+              <img src="{% static 'giftcard_application/images/flip_prompt.jpg' %}" id="flip_prompt">
+
               <img src="{% static 'giftcard_application/images/tails_coin.webp' %}" id="wrapper_flip_coin_result_img_tails">
 
               <img src="{% static 'giftcard_application/images/Golden-Gift-Card.jpg' %}" id="giftcard_img">
@@ -60,16 +69,19 @@
         <div class="col">
           <div class="scoreboard_wrapper">
             <div class="container scoreboard_wrapper_container">
+              <br>
+              <br>
+              <br>
               <p class="scoreboard_title">SCOREBOARD</p>
 
-              <div class="row">
-                <div class="col">
+              <div class="row container scoreboard_wrapper_container_row">
+                <div class="col container scoreboard_wrapper_container_row_col">
                   Game ID
                 </div>
-                <div class="col">
+                <div class="col container scoreboard_wrapper_container_row_col">
                   Heads
                 </div>
-                <div class="col">
+                <div class="col container scoreboard_wrapper_container_row_col">
                   Tails
                 </div>
               </div>
@@ -104,9 +116,12 @@
     <script>
 
 
+      
+
       var coin_flip_heads = document.getElementById('wrapper_flip_coin_result_img_heads');
       var coin_flip_tails = document.getElementById('wrapper_flip_coin_result_img_tails');
       var giftcard_img = document.getElementById('giftcard_img');
+      var flip_prompt_img = document.getElementById('flip_prompt');
 
       var giftcard_message = document.getElementById('giftcard_message_wrapper');
 
@@ -150,7 +165,8 @@
         //Reset the content of div
         reset_counter();
         disable_generate_giftcard();
-
+    
+        
 
 
 
@@ -180,8 +196,10 @@
 
           card_number = data.identifier;
           gift_card_info = data;
-          giftcard_created_message();
-          disable_button();
+          //giftcard_created_message();
+          //disable_button();
+          flip_prompt_display();
+
       })
       .catch((error) => {
       console.log(error)
@@ -189,10 +207,15 @@
 
     }
 
+    function flip_prompt_display(){
+      flip_prompt_img.style.display = 'block';
+      return;
+    }
+
     function disable_generate_giftcard(){
         generate_giftcard_btn.disabled = true;
         giftcard_img.style.display = 'none';
-        return
+        return;
       }
 
 
@@ -206,11 +229,11 @@
 
     function giftcard_created_message(){
 
-        const message = `giftcard has been issued ! `
+        const message = `giftcard has been issued ! `;
 
         //Pass this message to a toast or something
 
-        return
+        return;
     }
 
     async function payForCoinFlip(){
@@ -244,12 +267,14 @@
 
           console.log(data);
 
+          flip_prompt_hide();
           coinFlip(); 
 
           const credit_rem = data.credit_remaining;
 
           if (credit_rem == 0){
             console.log("If credit_remaining = 0 then disable button");
+            
             disable_flip_button();
             calculate_head_tail_ratio_stat();
             submit_to_scoreboard_question();
@@ -276,6 +301,13 @@
 
       }
 
+      function flip_prompt_hide(){
+        if (flip_prompt_img.style.display !== 'none'){
+        flip_prompt_img.style.display = 'none';
+        return;
+      }
+      return
+    }
 
 
       function disable_flip_button(){
