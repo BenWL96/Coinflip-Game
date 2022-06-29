@@ -406,11 +406,16 @@
 
             submit_to_scoreboard();
             //Swal.fire('Sending info to scoreboard...');
-            console.log('display a wheel whilst POST is happening');
+            Swal.fire('Your score was saved to the scoreboard :) Generate a new card to play again!');
+            reset_counter();
             return;
 
           } else if (result.isDenied) {
-            Swal.fire('Add your score next time !');
+            Swal.fire('Add your score next time :) Generate a new card to play again!');
+
+            reset_counter();
+            
+
             return;
           } else {
             submit_to_scoreboard_question();
