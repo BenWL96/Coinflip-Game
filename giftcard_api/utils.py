@@ -7,11 +7,8 @@ from .models import (
 from rest_framework.response import Response
 
 def create_giftcard():
-	print("HUH")
 
 	flag = False
-
-	print("Identifier has been selected")
 
 	while flag == False:
 
