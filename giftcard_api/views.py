@@ -17,7 +17,12 @@ from .serializers import (
 
 from .mixins import SingleFieldLookupMixin_Giftcards
 
-from .utils import create_giftcard
+from .utils import (
+	create_giftcard,
+	get_giftcard_using_id,
+	determine_response_by_credit_quantity,
+	request_data_create_scoreboard_object
+)
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -47,18 +52,13 @@ def giftcard_list(request):
 	#on button push, post and create new gift card.
 	elif request.method == 'POST':
 
-		# throttle post requests to 1 a minute.
 		print("method is post")
 
 		new_giftcard = create_giftcard()
 
-
 		serializer = SerializeGiftcards_POST(
 			new_giftcard, many=False
 		)
-
-		#serialize message into a dictionary before passing
-		# it back into the view
 
 		return Response(serializer.data)
 
@@ -87,40 +87,18 @@ class giftcard_detail(SingleFieldLookupMixin_Giftcards,
 		parameter_passed = self.kwargs
 		identifier = parameter_passed['identifier']
 
-		try:
-			giftcard = Giftcards.objects.get(identifier=identifier)
-
-		except Giftcards.DoesNotExist:
-			raise Http404("No matches for the given query.")
+		giftcard = get_giftcard_using_id(identifier)
 
 		credit_remaining = giftcard.credit_remaining
 
-		if credit_remaining > 0 and credit_remaining <= 25:
+		response = determine_response_by_credit_quantity(giftcard, credit_remaining)
 
-			activity_cost = 1
-			giftcard.credit_remaining = credit_remaining - activity_cost
-			giftcard.save()
+		return response
 
-			print("credit was successfull saved")
-			print("credit was successfull saved")
-
-			return Response({"message": "Thanks for playing ! Remaining balance : £" + str(
-								 giftcard.credit_remaining),
-							 'credit_remaining':  giftcard.credit_remaining
-							 })
-
-
-		elif credit_remaining == 0:
-			raise Http404("Sorry you have run out of credit, please redeem your card.")
-
-		elif credit_remaining >= 25:
-			raise Http404("Sorry, something went wrong here.")
 
 
 @api_view(['GET', 'POST'])
 def scoreboard(request):
-
-	#Always display the top 3 scores on the page.
 
 	if request.method == 'GET':
 
@@ -132,26 +110,16 @@ def scoreboard(request):
 		)
 		return Response(serializer.data)
 
-	#on button push, post and create new gift card.
 	elif request.method == 'POST':
 
 		# score data posted here.
 
 		print("method is post")
-		print(request.data)
-		probability_heads = request.data['probability_heads']
-		probability_tails = request.data['probability_tails']
 
-		new_scoreboard_object = Scoreboard.objects.create(
-			probability_heads=probability_heads,
-			probability_tails=probability_tails
-		)
+		new_scoreboard_object = request_data_create_scoreboard_object(request)
 
 		serializer = SerializeScoreboard(
 			new_scoreboard_object, many=False
 		)
-
-		#serialize message into a dictionary before passing
-		# it back into the view
 
 		return Response(serializer.data)

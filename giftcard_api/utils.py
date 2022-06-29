@@ -1,8 +1,10 @@
 import random
 import datetime
 from .models import (
-	Giftcards
+	Giftcards,
+	Scoreboard
 )
+from rest_framework.response import Response
 
 def create_giftcard():
 	print("HUH")
@@ -45,3 +47,48 @@ def create_giftcard():
 
 
 	return new_giftcard
+
+def get_giftcard_using_id(identifier):
+
+	try:
+		giftcard = Giftcards.objects.get(identifier=identifier)
+		return giftcard
+
+	except Giftcards.DoesNotExist:
+		raise Http404("No matches for the given query.")
+
+def determine_response_by_credit_quantity(giftcard, credit_remaining):
+
+	if credit_remaining > 0 and credit_remaining <= 25:
+
+		activity_cost = 1
+		giftcard.credit_remaining = credit_remaining - activity_cost
+		giftcard.save()
+
+		print("credit was successfull saved")
+
+		return Response(
+			{"message": "Thanks for playing ! Remaining balance : £" + str(
+				giftcard.credit_remaining),
+			 'credit_remaining': giftcard.credit_remaining
+			 })
+
+
+	elif credit_remaining == 0:
+		raise Http404(
+			"Sorry you have run out of credit, please redeem your card.")
+
+	elif credit_remaining >= 25:
+		raise Http404("Sorry, something went wrong here.")
+
+def request_data_create_scoreboard_object(request):
+
+	probability_heads = request.data['probability_heads']
+	probability_tails = request.data['probability_tails']
+
+	new_scoreboard_object = Scoreboard.objects.create(
+		probability_heads=probability_heads,
+		probability_tails=probability_tails
+	)
+
+	return new_scoreboard_object
