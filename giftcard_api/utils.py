@@ -6,6 +6,7 @@ from .models import (
 )
 from rest_framework.response import Response
 from django.http import Http404
+from django.core.exceptions import ValidationError, InvalidOperation
 
 def create_giftcard():
 
@@ -81,12 +82,24 @@ def determine_response_by_credit_quantity(giftcard, credit_remaining):
 
 def request_data_create_scoreboard_object(request):
 
-	probability_heads = request.data['probability_heads']
-	probability_tails = request.data['probability_tails']
+	if len(request.data) == 2:
+		probability_heads = request.data['probability_heads']
+		probability_tails = request.data['probability_tails']
 
-	new_scoreboard_object = Scoreboard.objects.create(
-		probability_heads=probability_heads,
-		probability_tails=probability_tails
-	)
 
-	return new_scoreboard_object
+		try:
+			new_scoreboard_object = Scoreboard.objects.create(
+				probability_heads=probability_heads,
+				probability_tails=probability_tails
+			)
+		except InvalidOperation as e:
+			"""This isn't working"""
+			raise ValidationError(e)
+
+		return new_scoreboard_object
+
+	else:
+		raise ValidationError({'message': "Sorry but this only takes dict containing probability_heads and probability_tails."})
+
+
+

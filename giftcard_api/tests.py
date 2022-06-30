@@ -94,4 +94,57 @@ class test_giftcard_endpoints(TestCase):
 		if self.assertEqual(response_dict, match_dict) == False:
 			return print("T6: card found at API endpoint, but it can't exist")
 
-	
+
+		"""post to scoreboard endpoint WITH data"""
+
+		post_info = {'probability_heads': 0.5, 'probability_tails': 0.5}
+		url = reverse('giftcard_api:scoreboard')
+
+		response = self.client.post(
+			url, data=post_info)
+
+		input_dict = response.data
+		response_dict = json.loads(json.dumps(input_dict))
+
+		match_dict = {'score_id': 1, 'probability_heads': '0.50', 'probability_tails': '0.50'}
+
+		print("T7 initiate")
+		if self.assertEqual(response_dict, match_dict) == False:
+			return print("T7: post made to /scoreboard/ endpoint, but no score was saved.")
+
+		"""post to scoreboard endpoint NO data
+
+		post_info = {}
+		url = reverse('giftcard_api:scoreboard')
+
+		response = self.client.post(
+			url, data=post_info)
+
+		input_dict = response.data
+		response_dict = json.loads(json.dumps(input_dict))
+
+		match_dict = {'message': ['Sorry but this only takes dict containing probability_heads and probability_tails.']}
+
+		print("T8 initiate")
+		if self.assertIn(response_dict, match_dict) == False:
+			return print("T8: post made to /scoreboard/ endpoint with no data in request. the response message is different than expected.")"""
+
+		"""post to scoreboard endpoint WITH incorrect data type"""
+
+		post_info = {'probability_heads': "data", 'probability_tails': "data"}
+		url = reverse('giftcard_api:scoreboard')
+
+		response = self.client.post(
+			url, data=post_info)
+
+		input_dict = response.data
+		response_dict = json.loads(json.dumps(input_dict))
+
+		print(response_dict)
+		print(response_dict)
+
+		"""print("T9 initiate")
+		if self.assertEqual(response_dict, match_dict) == False:
+			return print(
+				"T9: post made to /scoreboard/ endpoint, but no score was saved.")
+"""
