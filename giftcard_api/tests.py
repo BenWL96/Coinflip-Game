@@ -61,6 +61,22 @@ class test_giftcard_endpoints(TestCase):
 		if self.assertEqual(response_dict, match_dict) == False:
 			return print("T4: Cards credit did not change")
 
+
+		"""put to giftcard_detail"""
+
+		response = self.client.put(
+			url)
+
+		input_dict = response.data
+		response_dict = json.loads(json.dumps(input_dict))
+
+		match_dict = {'identifier': ['This field is required.'], 'expiry_date': ['This field is required.']}
+
+		print(response_dict)
+		if self.assertEqual(response_dict, match_dict) == False:
+			return print("T5: Cards credit did not change")
+
+
 		"""patch to giftcard_detail when giftcard doesn't exist"""
 
 		args_identifier = {'identifier': giftcard_identifier + 1}
@@ -74,8 +90,8 @@ class test_giftcard_endpoints(TestCase):
 
 		match_dict = {'detail': 'Not found.'}
 
-		print("T5 initiate")
+		print("T6 initiate")
 		if self.assertEqual(response_dict, match_dict) == False:
-			return print("T5: card found at API endpoint, but it can't exist")
+			return print("T6: card found at API endpoint, but it can't exist")
 
 	
