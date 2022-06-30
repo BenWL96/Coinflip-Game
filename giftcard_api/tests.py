@@ -44,9 +44,10 @@ class test_giftcard_endpoints(TestCase):
 
 		giftcard_identifier = response_dict['identifier']
 
+		"""patch to giftcard_detail when giftcard exists"""
 
 		args_identifier = {'identifier': giftcard_identifier}
-		url = reverse('giftcard_api:giftcard_detail', args=args_identifier)
+		url = reverse('giftcard_api:giftcard_detail', kwargs=args_identifier)
 
 		response = self.client.patch(
 			url)
@@ -54,31 +55,27 @@ class test_giftcard_endpoints(TestCase):
 		input_dict = response.data
 		response_dict = json.loads(json.dumps(input_dict))
 
-		print(response_dict)
+		match_dict = {'message': 'Thanks for playing ! Remaining balance : £24', 'credit_remaining': 24}
 
-	"""args = {
-			'date': date,
-			'consultation_id': consultation_id,
-		}
+		print("T4 initiate")
+		if self.assertEqual(response_dict, match_dict) == False:
+			return print("T4: Cards credit did not change")
 
-		# PATCH
+		"""patch to giftcard_detail when giftcard doesn't exist"""
 
-		consultation_now_booked = {"consultation_booked": True}
-
-		url = reverse('lessons_restful:consultation-detail', kwargs=args)
+		args_identifier = {'identifier': giftcard_identifier + 1}
+		url = reverse('giftcard_api:giftcard_detail', kwargs=args_identifier)
 
 		response = self.client.patch(
-			url, HTTP_AUTHORIZATION='Token {}'.format(
-				self.token
-			), data=consultation_now_booked)
+			url)
 
 		input_dict = response.data
 		response_dict = json.loads(json.dumps(input_dict))
 
-		message_match = {
-			'message': 'The details of the consultation with ID: 1 have been updated successfully'}
+		match_dict = {'detail': 'Not found.'}
 
-		if self.assertEqual(response_dict, message_match) == False:
-			print("patch test failed")"""
+		print("T5 initiate")
+		if self.assertEqual(response_dict, match_dict) == False:
+			return print("T5: card found at API endpoint, but it can't exist")
 
-
+	

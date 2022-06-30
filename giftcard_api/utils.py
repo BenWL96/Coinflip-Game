@@ -5,6 +5,7 @@ from .models import (
 	Scoreboard
 )
 from rest_framework.response import Response
+from django.http import Http404
 
 def create_giftcard():
 
