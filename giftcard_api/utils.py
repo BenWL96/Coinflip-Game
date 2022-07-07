@@ -6,8 +6,8 @@ from .models import (
 )
 from rest_framework.response import Response
 from django.http import Http404
-from django.core.exceptions import ValidationError, InvalidOperation
-
+from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied
 def create_giftcard():
 
 	flag = False
@@ -86,17 +86,34 @@ def request_data_create_scoreboard_object(request):
 		probability_heads = request.data['probability_heads']
 		probability_tails = request.data['probability_tails']
 
-
+		#Test datatype passed
 		try:
-			new_scoreboard_object = Scoreboard.objects.create(
-				probability_heads=probability_heads,
-				probability_tails=probability_tails
-			)
-		except InvalidOperation as e:
-			"""This isn't working"""
-			raise ValidationError(e)
+			float(probability_heads) and float(probability_tails)
+			print("the data passed can be converted to float")
+		except (ValueError, TypeError) as e:
+			raise PermissionDenied
 
-		return new_scoreboard_object
+
+		#convert data passed
+		sum = float(probability_heads) + float(probability_tails)
+
+		#make sure sum of data is legitimate.
+		#probabilities must add to 1.
+
+		if sum == float(1.0):
+			try:
+				new_scoreboard_object = Scoreboard.objects.create(
+					probability_heads=probability_heads,
+					probability_tails=probability_tails
+				)
+			except:
+				"""This isn't working"""
+				raise ValidationError(e)
+
+			return new_scoreboard_object
+
+		raise ValidationError({
+			'message': "Sorry but the probability does not add to one.."})
 
 	else:
 		raise ValidationError({'message': "Sorry but this only takes dict containing probability_heads and probability_tails."})

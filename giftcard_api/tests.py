@@ -3,6 +3,7 @@ from .models import Giftcards
 from .utils import create_giftcard
 import json, datetime
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 # Create your tests here.
 class test_giftcard_endpoints(TestCase):
 
@@ -72,7 +73,7 @@ class test_giftcard_endpoints(TestCase):
 
 		match_dict = {'identifier': ['This field is required.'], 'expiry_date': ['This field is required.']}
 
-		print(response_dict)
+		print("T5 initiate")
 		if self.assertEqual(response_dict, match_dict) == False:
 			return print("T5: Cards credit did not change")
 
@@ -140,11 +141,10 @@ class test_giftcard_endpoints(TestCase):
 		input_dict = response.data
 		response_dict = json.loads(json.dumps(input_dict))
 
-		print(response_dict)
-		print(response_dict)
+		match_dict = "{'detail': 'You do not have permission to perform this action.'}"
 
-		"""print("T9 initiate")
-		if self.assertEqual(response_dict, match_dict) == False:
+		print("T9 initiate")
+		if self.assertIn(str(response_dict), match_dict) == False:
 			return print(
 				"T9: post made to /scoreboard/ endpoint, but no score was saved.")
-"""
+
