@@ -24,10 +24,35 @@ body{
 	font-size: 30px;
 }
 
-#giftcard_img{
-	width: 450px;
-	height: 300px;
+@media(min-width: 450px){
+	#giftcard_img{
+		width: 450px;
+		height: 300px;
+	}
 }
+@media(max-width: 450px){
+	#giftcard_img{
+		width: 300px;
+		height: 200px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+
+
+
+.landing_page_row_container {
+		width: 480px;
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+.landing_page_row{
+	display: flex;
+	flex-wrap: wrap;
+}
+
 
 .scoreboard_wrapper{
 	height: 556.65px;
