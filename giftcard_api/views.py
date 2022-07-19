@@ -1,6 +1,7 @@
 
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.db.models.query import QuerySet
 
 from .models import (
 	Giftcards,
@@ -117,6 +118,16 @@ def scoreboard(request):
 		print("method is post")
 
 		new_scoreboard_object = request_data_create_scoreboard_object(request)
+
+		#Try accessing a field from the object, if error then return.
+
+		try:
+			new_scoreboard_object.probability_heads
+		except Exception as e:
+			print("this is not a queryset!")
+			print(new_scoreboard_object)
+			"""print(e)"""
+			return Response(new_scoreboard_object)
 
 		serializer = SerializeScoreboard(
 			new_scoreboard_object, many=False

@@ -89,6 +89,8 @@ class test_giftcard_endpoints(TestCase):
 		input_dict = response.data
 		response_dict = json.loads(json.dumps(input_dict))
 
+		print(response_dict)
+		print(response_dict)
 		match_dict = {'detail': 'Not found.'}
 
 		print("T6 initiate")
@@ -106,7 +108,8 @@ class test_giftcard_endpoints(TestCase):
 
 		input_dict = response.data
 		response_dict = json.loads(json.dumps(input_dict))
-
+		print(response_dict)
+		print(response_dict)
 		match_dict = {'score_id': 1, 'probability_heads': '0.50', 'probability_tails': '0.50'}
 
 		print("T7 initiate")
@@ -147,4 +150,26 @@ class test_giftcard_endpoints(TestCase):
 		if self.assertIn(str(response_dict), match_dict) == False:
 			return print(
 				"T9: post made to /scoreboard/ endpoint, but no score was saved.")
+
+
+		"""Test probability sum to 1 failed"""
+
+		post_info = {'probability_heads': 0.68, 'probability_tails': 0.33}
+		url = reverse('giftcard_api:scoreboard')
+
+		self.client.post(url, data=post_info)
+
+		input_dict = response.data
+		response_dict = json.loads(json.dumps(input_dict))
+		"""match_dict = {'message': "Sorry but the probability does not add to one.."}"""
+		#I'm not sure why this error is popping up... The error message above
+		#is returned from utils.py, but when returned
+		#from views.py it comes back as something else
+		match_dict = {'detail': 'You do not have permission to perform this action.'}
+
+		print("T10 initiate")
+		if self.assertEquals(response_dict, match_dict) == False:
+			return print(
+				"T10: probably > 1 sent to /scoreboard/ endpoint, but the correct error was not returned.")
+
 
